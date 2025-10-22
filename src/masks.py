@@ -3,7 +3,7 @@ from typing import Union
 
 def get_mask_card_number(card_number: Union[int, str]) -> str:
     """
-    Принимает номер карты, возвращает замаскированный номер
+    Принимаем номер карты, возвращает замаскированный номер
     """
     card = str(card_number)
     if len(card) < 16:
@@ -20,7 +20,7 @@ def get_mask_card_number(card_number: Union[int, str]) -> str:
 
 def get_mask_account(account_number: Union[int, str]) -> str:
     """
-    Принимает номер счета и возвращает замаскированный номер
+    Принимаем номер счета и возвращает замаскированный номер
     """
     number = str(account_number)
     if len(number) < 20:
