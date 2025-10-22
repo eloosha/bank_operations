@@ -1,7 +1,4 @@
-from typing import Union
-
-
-def get_mask_card_number(card_number: Union[int, str]) -> str:
+def get_mask_card_number(card_number: str | int) -> str:
     """
     Принимаем номер карты, возвращает замаскированный номер
     """
@@ -18,7 +15,7 @@ def get_mask_card_number(card_number: Union[int, str]) -> str:
     return " ".join(parts)
 
 
-def get_mask_account(account_number: Union[int, str]) -> str:
+def get_mask_account(account_number: str | int) -> str:
     """
     Принимаем номер счета и возвращает замаскированный номер
     """
