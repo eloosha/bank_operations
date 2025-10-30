@@ -1,10 +1,17 @@
-# Принимает список словарей и опционально значение для ключа state (по умолчанию 'EXECUTED').
-# Функция возвращает новый список словарей, содержащий только те словари, у которых ключ state соответствует указанному значению.
-def filter_by_state():
-    pass
+def filter_by_state(my_list: list[dict], state: str = "EXECUTED") -> list[dict]:
+    """
+    Принимаем список словарей, возвращает только те, у которых есть значение EXECUTED
+    """
+    filtered_list = []
+    for item in my_list:
+        if item.get("state") == state:
+            filtered_list.append(item)
+    return filtered_list
 
 
-# Принимает список словарей и необязательный параметр, задающий порядок сортировки (по умолчанию — убывание).
-# Функция должна возвращать новый список, отсортированный по дате (date).
-def sort_by_date():
-    pass
+def sort_by_date(my_list: list[dict], ascending: bool = True) -> list[dict]:
+    """
+    Принимаем список словарей и сортирует их по дате
+    """
+    sorted_list = sorted(my_list, key=lambda item: item["date"], reverse=ascending)
+    return sorted_list
