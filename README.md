@@ -1,4 +1,4 @@
-# Проект "bank_operations"
+# Проект по Python "bank_operations"
 
 ## Описание:
 
