@@ -1,4 +1,4 @@
-# Учебный проект по Python "bank_operations"
+# Учебный проект по Python "bank_operations".
 
 ## Описание:
 
