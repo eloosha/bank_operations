@@ -49,7 +49,7 @@ python manage.py runserver
 
 Для запуска тестов используется 'pytest'.
 
-### Запуск тестов
+## Запуск тестов
 
 ```bash
 pytest
