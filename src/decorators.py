@@ -1,6 +1,24 @@
-def log(filename=None):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
+from typing import Callable, Any, Optional
+
+
+def log(filename: Optional[str] = None) -> Callable:
+    """
+    Декоратор для логирования вызовов функции.
+
+    Если указан filename, логи записываются в файл.
+    Если filename не указан — выводятся только в консоль.
+
+    Логируются:
+    - старт выполнения функции
+    - успешное завершение и результат
+    - исключения с аргументами, при их возникновении
+    """
+    def decorator(func: Callable) -> Callable:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            """
+            Обёртка, выполняющая логирование перед, после и при ошибке
+            исходной функции.
+            """
             print(f"Начало выполнения функции: {func.__name__}")
 
             if filename is None:
