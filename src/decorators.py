@@ -1,4 +1,4 @@
-from typing import Callable, Any, Optional
+from typing import Any, Callable, Optional
 
 
 def log(filename: Optional[str] = None) -> Callable:
@@ -13,6 +13,7 @@ def log(filename: Optional[str] = None) -> Callable:
     - успешное завершение и результат
     - исключения с аргументами, при их возникновении
     """
+
     def decorator(func: Callable) -> Callable:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             """
