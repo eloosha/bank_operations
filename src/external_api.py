@@ -11,7 +11,7 @@ def get_amount_rub(transaction: dict) -> float:
     """
     Принимает словарь с транзакциями и возвращает сумму в рублях.
     Если валюта RUB - возвращает напрямую сумму.
-    Если валюта USD/EUR - конвертирует актуальные данные через API.
+    Если валюта USD/EUR - конвертирует актуальные данные через API get /convert.
     """
     amount = float(transaction.get("amount", 0))
     currency = transaction.get("currency", "RUB")
@@ -22,16 +22,18 @@ def get_amount_rub(transaction: dict) -> float:
     if not API_KEY:
         return 0.0
 
-    url = "https://api.apilayer.com/exchangerates_data/latest"
+    url = "https://api.apilayer.com/exchangerates_data/convert"
+    params = {"from": currency, "to": "RUB", "amount": amount}
     headers = {"apikey": API_KEY}
-    params = {"base": currency, "symbols": "RUB"}
 
     try:
         response = requests.get(url, headers=headers, params=params)
         data = response.json()
-        rate = data.get("rates", {}).get("RUB")
-        if rate is None:
+
+        if not data.get("success"):
             return 0.0
-        return amount * float(rate)
+
+        return float(data.get("result", 0.0))
+
     except (requests.RequestException, ValueError, KeyError):
         return 0.0

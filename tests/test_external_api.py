@@ -14,8 +14,9 @@ def test_get_amount_rub_usd(mock_get):
 
     mock_response = MagicMock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"rates": {"RUB": 100}}
+    mock_response.json.return_value = {"success": True, "result": 950.0}
     mock_get.return_value = mock_response
 
     result = get_amount_rub(transaction)
-    assert result == 10 * 100
+
+    assert result == 950.0
