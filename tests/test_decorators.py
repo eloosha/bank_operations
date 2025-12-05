@@ -1,4 +1,5 @@
 import pytest
+
 from src.decorators import log
 
 
@@ -14,9 +15,9 @@ def test_log_successful(capsys):
     assert result == 2
     captured = capsys.readouterr()
     assert "Ошибка в функции divide: division by zero" in captured.out
-    assert 'Функция divide завершилась успешно. Результат: 2' in captured.out
-    assert 'Начало выполнения функции: divide' in captured.out
-    assert 'Конец выполнения функции: divide' in captured.out
+    assert "Функция divide завершилась успешно. Результат: 2" in captured.out
+    assert "Начало выполнения функции: divide" in captured.out
+    assert "Конец выполнения функции: divide" in captured.out
 
 
 def test_log_error(capsys):
@@ -49,4 +50,5 @@ def test_log_to_file():
     assert "Конец выполнения функции: add" in content
 
     import os
+
     os.remove(filename)
