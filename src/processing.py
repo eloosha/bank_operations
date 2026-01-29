@@ -23,25 +23,25 @@ def sort_by_date(records: list[dict], descending: bool = True) -> list[dict]:
 
 
 def process_bank_search(data: list[dict], search: str) -> list[dict]:
-    '''
+    """
     Функция проходит по данным с операциями и возвращает список словарей
     по ключевому слову в описании операций ('description')
-    '''
+    """
     search_result = []
     pattern = re.compile(search, re.IGNORECASE)
 
     for item in data:
-        if pattern.search(item.get('description', '')):
+        if pattern.search(item.get("description", "")):
             search_result.append(item)
     return search_result
 
 
 def process_bank_operations(data: list[dict], categories: list) -> dict:
-    '''
+    """
     Принимает список операций и список категорий, выводит словарь категорий и
     их количество в списке операций.
-    '''
-    filtered_descriptions = [item["description"] for item in data if item['description'] in categories]
+    """
+    filtered_descriptions = [item["description"] for item in data if item["description"] in categories]
 
     counter = Counter(filtered_descriptions)
 
