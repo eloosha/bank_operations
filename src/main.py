@@ -1,6 +1,17 @@
 from src.generators import filter_by_currency
 from src.processing import filter_by_state, process_bank_operations, process_bank_search, sort_by_date
 from src.utils import choose_file_format, read_json_file
+from src.masks import get_mask_account, get_mask_card_number
+from pathlib import Path
+
+from src.widget import mask_account_card
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / 'data'
+
+data_path_json = str(DATA_DIR / 'operations.json')
+data_path_csv = str(DATA_DIR / 'transactions.csv')
+data_path_xlsx = str(DATA_DIR / 'transactions_excel.xlsx')
 
 
 def main():
@@ -22,14 +33,17 @@ def main():
         else:
             break
 
-    # Получаем данные через choose_file_format
-    while True:
-        path = input("Введите путь к файлу с транзакциями: ").strip()
-        try:
-            data = choose_file_format(path)
-            break
-        except ValueError as e:
-            print("Неверный путь к файлу. Попробуйте ввести путь ещё раз. ")
+    if user_choice == "1":
+        print('Для обработки выбран JSON-файл')
+        data = choose_file_format(data_path_json)
+
+    if user_choice == "2":
+        print('Для обработки выбран CSV-файл')
+        data = choose_file_format(data_path_csv)
+
+    if user_choice == "3":
+        print('Для обработки выбран XLSX-файл')
+        data = choose_file_format(data_path_xlsx)
 
     # Фильтрация по статусу
     valid_statuses = ("EXECUTED", "CANCELED", "PENDING")
@@ -83,16 +97,50 @@ def main():
         print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации")
         return
 
+    if user_choice in ('2', '3'):
+        normalized_data = []
+        for row in data:
+            from_str = str(row["from"]).strip()
+            to_str = str(row["to"]).strip()
+
+            item = {
+                'id': row['id'],
+                'state': row['state'],
+                'date': row['date'],
+                'from': mask_account_card(from_str),
+                'to': mask_account_card(to_str),
+                'description': row['description'],
+                'operationAmount': {
+                    'amount': row['amount'],
+                    'currency': {
+                        'name': row['currency_name'],
+                        'code': row['currency_code'],
+                    }
+                }
+            }
+            normalized_data.append(item)
+        data = normalized_data
+
     data = list(data)
-    print(f"\nКоличество операций по категориям: {len(data)}")
+    print(f"\nВсего банковских операций в выборке: {len(data)}")
 
     for item in data:
         date = item["date"][:10]
         description = item["description"]
         amount = item["operationAmount"]["amount"]
         currency = item["operationAmount"]["currency"]["name"]
+        from_ = item.get('from', '')
+        to_ = item.get('to', '')
 
         print(f"{date} {description}")
+        if from_ and to_:
+          print(f'{from_} -> {to_}')
+        elif from_:
+            print(from_)
+        elif to_:
+            print(to_)
+        else:
+            return
         print(f"Сумма: {amount} {currency}\n")
 
 
