@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from src.generators import filter_by_currency
-from src.masks import get_mask_account, get_mask_card_number
-from src.processing import filter_by_state, process_bank_operations, process_bank_search, sort_by_date
-from src.utils import choose_file_format, read_json_file
+from src.processing import filter_by_state, process_bank_search, sort_by_date
+from src.utils import choose_file_format
+
 from src.widget import mask_account_card
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,6 +44,28 @@ def main():
     if user_choice == "3":
         print("Для обработки выбран XLSX-файл")
         data = choose_file_format(data_path_xlsx)
+
+    # Приводим CSV и XLSX в единый формат
+    if user_choice in ("2", "3"):
+        normalized_data = []
+        for row in data:
+            item = {
+                "id": row["id"],
+                "state": row["state"],
+                "date": row["date"],
+                "from": row["from"],
+                "to": row['to'],
+                "description": row["description"],
+                "operationAmount": {
+                    "amount": row["amount"],
+                    "currency": {
+                        "name": row["currency_name"],
+                        "code": row["currency_code"],
+                    },
+                },
+            }
+            normalized_data.append(item)
+        data = normalized_data
 
     # Фильтрация по статусу
     valid_statuses = ("EXECUTED", "CANCELED", "PENDING")
@@ -97,31 +119,6 @@ def main():
         print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации")
         return
 
-    # Приводим CSV и XLSX в формат JSON для однотипности формата
-    if user_choice in ("2", "3"):
-        normalized_data = []
-        for row in data:
-            from_str = str(row["from"]).strip()
-            to_str = str(row["to"]).strip()
-
-            item = {
-                "id": row["id"],
-                "state": row["state"],
-                "date": row["date"],
-                "from": mask_account_card(from_str),
-                "to": mask_account_card(to_str),
-                "description": row["description"],
-                "operationAmount": {
-                    "amount": row["amount"],
-                    "currency": {
-                        "name": row["currency_name"],
-                        "code": row["currency_code"],
-                    },
-                },
-            }
-            normalized_data.append(item)
-        data = normalized_data
-
     # Приводим дату к типу данных список, создаем переменные для принта
     data = list(data)
     print(f"\nВсего банковских операций в выборке: {len(data)}")
@@ -131,8 +128,10 @@ def main():
         description = item["description"]
         amount = item["operationAmount"]["amount"]
         currency = item["operationAmount"]["currency"]["name"]
-        from_ = item.get("from", "")
-        to_ = item.get("to", "")
+        from_raw = item.get("from", "")
+        to_raw = item.get("to", "")
+        from_ = mask_account_card(str(from_raw)) if from_raw else ''
+        to_ = mask_account_card(str(to_raw)) if to_raw else ''
 
         # Принтуем данные
         print(f"{date} {description}")
