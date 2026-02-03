@@ -39,7 +39,7 @@ def read_csv_file(path: str) -> list[dict]:
     Если файл не найден, пустой или содержит не список — возвращается пустой список.
     """
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, sep=';')
         result = df.to_dict("records")
         return result
     except (FileNotFoundError, ValueError):
